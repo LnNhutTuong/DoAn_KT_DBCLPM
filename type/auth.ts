@@ -1,6 +1,6 @@
 export interface LoginResult {
   status: number;
   body: any;
-  accessToken?: string;
-  refreshToken?: string;
+  access_token?: string;
+  refresh_token?: string;
 }

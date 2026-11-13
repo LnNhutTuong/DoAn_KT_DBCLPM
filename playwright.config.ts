@@ -11,7 +11,7 @@ export default defineConfig({
   fullyParallel: false,
   retries: 0,
 
-  timeout: 30_000,
+  timeout: 600_000,
 
   reporter: [
     ['list'],

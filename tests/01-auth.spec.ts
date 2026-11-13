@@ -5,10 +5,10 @@ test.describe('SC01 - Đăng nhập, đăng xuất, làm mới token', () => {
   test('TC01 - Đăng nhập thành công với tài khoản hợp lệ', async ({ request }) => {
     const r = await login(request, env('NCS_USER'), env('NCS_PASS'));
     expect(r.status).toBeLessThan(300);
-    expect(r.accessToken, 'phải có accessToken').toBeTruthy();
-    expect(r.refreshToken, 'phải có refreshToken').toBeTruthy();
+    expect(r.access_token, 'phải có access_token').toBeTruthy();
+    expect(r.refresh_token, 'phải có refresh_token').toBeTruthy();
 
-    const me = await request.get(p('auth/me'), { headers: bearer(r.accessToken!) });
+    const me = await request.get(p('auth/me'), { headers: bearer(r.access_token!) });
     expect(me.status()).toBe(200);
   });
 
@@ -18,8 +18,8 @@ test.describe('SC01 - Đăng nhập, đăng xuất, làm mới token', () => {
 
     expect(wrongPass.status).toBe(401);
     expect(noUser.status).toBe(401);
-    expect(wrongPass.accessToken).toBeUndefined();
-    expect(noUser.accessToken).toBeUndefined();
+    expect(wrongPass.access_token).toBeUndefined();
+    expect(noUser.access_token).toBeUndefined();
 
     // Không lộ username có tồn tại hay không: thông báo lỗi phải giống nhau
     const m1 = findKey(wrongPass.body, 'message');
@@ -29,14 +29,14 @@ test.describe('SC01 - Đăng nhập, đăng xuất, làm mới token', () => {
 
   test('TC05 - Refresh token hợp lệ cấp cặp token mới', async ({ request }) => {
     const first = await loginOk(request, 'NCS_USER', 'NCS_PASS');
-    const res = await request.post(p('auth/refresh'), { data: { refreshToken: first.refreshToken } });
+    const res = await request.post(p('auth/refresh'), { data: { refreshToken: first.refresh_token } });
     expect(res.status()).toBeLessThan(300);
     const body = await safeJson(res);
-    const newAccess = findKey(body, 'accessToken');
-    const newRefresh = findKey(body, 'refreshToken');
+    const newAccess = findKey(body, 'access_token');
+    const newRefresh = findKey(body, 'refresh_token');
     expect(newAccess).toBeTruthy();
     expect(newRefresh).toBeTruthy();
-    expect(newRefresh).not.toEqual(first.refreshToken);
+    expect(newRefresh).not.toEqual(first.refresh_token);
 
     const me = await request.get(p('auth/me'), { headers: bearer(newAccess) });
     expect(me.status()).toBe(200);
@@ -45,11 +45,11 @@ test.describe('SC01 - Đăng nhập, đăng xuất, làm mới token', () => {
   test('TC06 - Reuse detection: dùng lại refresh token cũ thu hồi toàn bộ phiên', async ({ request }) => {
     test.setTimeout(60_000);
     const first = await loginOk(request, 'NCS_USER', 'NCS_PASS');
-    const rt1 = first.refreshToken;
+    const rt1 = first.refresh_token;
 
     const refreshed = await request.post(p('auth/refresh'), { data: { refreshToken: rt1 } });
     expect(refreshed.status()).toBeLessThan(300);
-    const rt2 = findKey(await safeJson(refreshed), 'refreshToken');
+    const rt2 = findKey(await safeJson(refreshed), 'refresh_token');
     expect(rt2).toBeTruthy();
 
     // Chờ vượt grace period 15 giây

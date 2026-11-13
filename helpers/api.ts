@@ -1,5 +1,6 @@
 import { APIRequestContext, APIResponse } from '@playwright/test';
 import { createHash } from 'crypto';
+import fs from 'fs';
 import { LoginResult } from '../type/auth';
 
 /**
@@ -51,14 +52,14 @@ export async function login(
   return {
     status: res.status(),
     body,
-    accessToken: findKey(body, 'accessToken'),
-    refreshToken: findKey(body, 'refreshToken'),
+    access_token: findKey(body, 'access_token'),
+    refresh_token: findKey(body, 'refresh_token'),
   };
 }
 
 export async function loginOk(request: APIRequestContext, userEnv: string, passEnv: string) {
   const r = await login(request, env(userEnv), env(passEnv));
-  if (r.status >= 300 || !r.accessToken) {
+  if (r.status >= 300 || !r.access_token) {
     throw new Error(`Đăng nhập ${env(userEnv)} thất bại (HTTP ${r.status}). Kiểm tra .env`);
   }
   return r as Required<LoginResult>;
@@ -77,21 +78,41 @@ export function makePdf(sizeBytes: number): Buffer {
   return buf;
 }
 
-export const sha256 = (b: Buffer) => createHash('sha256').update(b).digest('hex');
+export const sha256 = (b: Buffer | string) => {
+  if (typeof b === 'string') {
+    return createHash('sha256').update(fs.readFileSync(b)).digest('hex');
+  }
+  return createHash('sha256').update(b).digest('hex');
+};
 
 export async function upload(
   request: APIRequestContext,
   token: string,
-  opts: { buffer: Buffer; filename?: string; mimeType?: string; documentType?: string },
+  opts: {
+    buffer?: Buffer;
+    filePath?: string;
+    filename?: string;
+    mimeType?: string;
+    documentType?: string;
+  },
 ) {
+  let filePayload: any;
+  if (opts.filePath) {
+    filePayload = fs.createReadStream(opts.filePath);
+  } else if (opts.buffer) {
+    filePayload = {
+      name: opts.filename ?? 'test.pdf',
+      mimeType: opts.mimeType ?? 'application/pdf',
+      buffer: opts.buffer,
+    };
+  } else {
+    throw new Error('Cần cung cấp filePath hoặc buffer để upload');
+  }
+
   return request.post(p('documents/upload'), {
     headers: bearer(token),
     multipart: {
-      [UPLOAD_FILE_FIELD]: {
-        name: opts.filename ?? 'test.pdf',
-        mimeType: opts.mimeType ?? 'application/pdf',
-        buffer: opts.buffer,
-      },
+      [UPLOAD_FILE_FIELD]: filePayload,
       [UPLOAD_TYPE_FIELD]: opts.documentType ?? 'MINH_CHUNG_MOC',
     },
   });
