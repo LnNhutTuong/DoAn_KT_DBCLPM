@@ -1,0 +1,21 @@
+{
+  "name": "pams-api-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Automation API tests cho PAMS (Playwright + TypeScript)",
+  "scripts": {
+    "test": "playwright test",
+    "test:auth": "playwright test tests/01-auth.spec.ts",
+    "test:rbac": "playwright test tests/02-rbac.spec.ts",
+    "test:upload": "playwright test tests/03-upload.spec.ts",
+    "test:progress": "playwright test tests/04-progress.spec.ts",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.4.0",
+    "typescript": "^5.4.0"
+  }
+}
