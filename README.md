@@ -18,12 +18,12 @@ Kết quả: `playwright-report/` (HTML, dùng làm bằng chứng nộp) và `t
 
 ## Test đã có (14 test, 11 test case trong file Excel)
 
-| File | Test case |
-|---|---|
-| 01-auth.spec.ts | TC01, TC02, TC05, TC06 |
-| 02-rbac.spec.ts | TC11, TC12, TC13, TC16 (cần DOC_ID_OF_OTHER_NCS), TC18 |
-| 03-upload.spec.ts | TC49, TC50, TC51, TC52 |
-| 04-progress.spec.ts | TC21 (cần tài khoản NCS mới NCS_NEW_USER) |
+| File                | Test case                                              |
+| ------------------- | ------------------------------------------------------ |
+| 01-auth.spec.ts     | TC01, TC02, TC05, TC06                                 |
+| 02-rbac.spec.ts     | TC11, TC12, TC13, TC16 (cần DOC_ID_OF_OTHER_NCS), TC18 |
+| 03-upload.spec.ts   | TC49, TC50, TC51, TC52                                 |
+| 04-progress.spec.ts | TC21 (cần tài khoản NCS mới NCS_NEW_USER)              |
 
 TC06 chờ 16 giây (grace period của refresh token), TC50/TC51 upload file 15MB nên chậm hơn.
 
