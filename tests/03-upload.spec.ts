@@ -60,7 +60,7 @@ test.describe('SC08 - Upload và quản lý tài liệu PDF', () => {
   });
 
   test('TC50 - Upload file PDF đúng 15MB (biên)', async ({ request }) => {
-    test.setTimeout(300_000);
+    // test.setTimeout(300_000);
     const { access_token } = await loginOk(request, 'NCS_USER', 'NCS_PASS');
     try {
       const res = await upload(request, access_token, { filePath: FILE_EXACT_15MB });
@@ -74,7 +74,7 @@ test.describe('SC08 - Upload và quản lý tài liệu PDF', () => {
   });
 
   test('TC51 - Upload file PDF vượt 15MB 1 byte', async ({ request }) => {
-    test.setTimeout(300_000);
+    // test.setTimeout(300_000);
     const { access_token } = await loginOk(request, 'NCS_USER', 'NCS_PASS');
     try {
       const res = await upload(request, access_token, { filePath: FILE_15MB_PLUS_1B });

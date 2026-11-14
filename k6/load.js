@@ -1,1 +1,0 @@
-// check voi luong nguoi dung
