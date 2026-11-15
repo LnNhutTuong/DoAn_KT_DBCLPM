@@ -8,9 +8,9 @@ const HOLD = __ENV.HOLD || '2m';
 
 export const options = {
   stages: [
-    { duration: '30s', target: VUS },
-    { duration: HOLD, target: VUS },
-    { duration: '30s', target: 0 },
+    { duration: '30s', target: VUS }, // tăng tải ramp-up 0 -> VUS
+    { duration: HOLD, target: VUS }, // hold tại VUS
+    { duration: '30s', target: 0 }, // giảm tải ramp-down VUS -> 0
   ],
 
   thresholds: {
